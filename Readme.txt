@@ -1,3 +1,8 @@
+ the static website is hosted on.
+ http://52.16.171.183
+
+If you need a dns we could use route53 from your aws account, create a A record and that should do.
+
 The corrections on the Ec2 instances are as below.
 
 the static files were missing from www folder on the instance had to clone the submodule
