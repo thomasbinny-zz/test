@@ -1,6 +1,8 @@
 The corrections on the Ec2 instances are as below.
 
 the static files were missing from www folder on the instance had to clone the submodule
+git submodule update --init
+
 Found the submodule repo from
 [ec2-user@ip-172-29-33-53 assingment]$ cat .gitmodules 
 [submodule "www"]
