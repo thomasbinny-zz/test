@@ -8,6 +8,7 @@ RUN adduser -D -g 'www' nginx
 RUN apk update && apk add nginx curl
 
 
+
 RUN mkdir /www && mkdir /www/${PROJECT_NAME} && \
 	mkdir /run/nginx && \
     chown -R nginx:www /var/lib/nginx && \
