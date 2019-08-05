@@ -65,3 +65,24 @@ Docker Swarm
 
 We could deploy it to multiple Ec2 instances using AutoScaling to scale up and down, but you would be spending more money 
 for a small static website, which would be economical on containers deployed on clusters which can be scaled up and down.
+
+
+Updates from 5th August 2019
+
+- We could also deploy these static files to S3 and create a route53 if you are looking for an easier solution.
+
+But since i had suggested the above method which would prove a good solution for all the microservices especially when the idea is to containerize, its idea you follow a containerized solution like docker, ecs, eks, gke or self managed kubernetes cluster.
+
+Please find below the manifest file and a jenkins template.
+
+
+
+
+
+
+
+
+
+
+
+
