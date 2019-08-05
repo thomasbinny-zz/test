@@ -1,0 +1,141 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{PROJECT}}
+  labels:
+    project: {{PROJECT}}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{PROJECT}}-sa
+  namespace: {{PROJECT}}
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: {{PROJECT}}-role
+  namespace: {{PROJECT}}
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["create","delete","get","list","patch","update","watch"]
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create","delete","get","list","patch","update","watch"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get","list","watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["create","delete","get","list","patch","update","watch"]
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["create","delete","get","list","patch","update","watch"]
+# - apiGroups: [""]
+#   resources: ["persistentvolumeclaims"]
+#   verbs: ["create","delete","get","list","patch","update","watch"]
+- apiGroups: ["extensions"]
+  resources: ["ingresses"]
+  verbs: ["create","delete","get","list","patch","update","watch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["get","list","watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: {{PROJECT}}
+  namespace: {{PROJECT}}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{PROJECT}}-role
+subjects:
+- kind: ServiceAccount
+  name: {{PROJECT}}-sa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{PROJECT}}
+  namespace: {{PROJECT}}
+  labels:
+    app: {{PROJECT}}
+spec:
+  replicas: {{REPLICAS}}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: {{PROJECT}}
+  template:
+    metadata:
+      labels:
+        app: {{PROJECT}}
+    spec:
+      containers:
+      - name: {{PROJECT}}
+        image: {{IMAGE_URL}}
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          limits:
+            cpu: {{CPU-LIMIT}}
+            memory: {{MEMORY-LIMIT}}
+          requests:
+            cpu: {{CPU-REQUEST}}
+            memory: {{MEMORY-REQUEST}}
+        env:
+          - name: PROJECT
+            value: {{PROJECT}}
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 60
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{PROJECT}}-service
+  namespace: {{PROJECT}}
+  labels:
+    app: {{PROJECT}}
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: {{PROJECT}}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{PROJECT}}-ingress
+  namespace: {{PROJECT}}
+  labels:
+    app: {{PROJECT}}
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{PROJECT}}-service
+          servicePort: http
+    host: {{PROJECT}}.lendable.com
