@@ -72,9 +72,9 @@ Updates from 5th August 2019
 - We could also deploy these static files to S3 and create a route53 if you are looking for an easier solution or using ansible.
 But looking at the bigger picture is what as a Devops Engineer would be ideal.
 
-But since i had suggested the above method which would prove a good solution for all the microservices especially when the idea is to containerize, its idea you follow a containerized solution like docker, ecs, eks, gke or self managed kubernetes cluster.
+But since i had suggested the above method which would prove a good solution for all the microservices especially when the idea is to containerize, its ideal for you to follow a containerized solution like docker, ecs, eks, gke or self managed kubernetes cluster.
 
-Docker has been modified to have each projects deployed by passing a parameter.
+Docker has been modified to have different front end projects deployed by passing a Project parameter.
 
 Please find attached the manifest file and a jenkins template which shows how we could deploy multiple replicas of an image.
 
