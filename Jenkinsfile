@@ -9,15 +9,25 @@ pipeline {
     ECRSHORTURL = '123456789.dkr.ecr.eu-west-1.amazonaws.com'
   }
 
-  stages {
-    stage ('PreBuild') {
+  stages {    
+    stage('CHECKOUT') {
+      agent {
+       label 'jenkins-slave'
+      }
       steps {
+        deleteDir()
+        checkout scm
         script {
-
           gitCommitHash = "${GIT_COMMIT}"
           env.SHORT_GIT_COMMIT = gitCommitHash.take(7)
           env.BUILD_IMAGE = "${PROJECT}:$SHORT_GIT_COMMIT"
           echo "Short Commit Hash is ${SHORT_GIT_COMMIT}"
+        }
+      }
+    }
+    stage ('PreBuild') {
+      steps {
+        script {
 
           sh '''
             ###### Checking if ECR repo exists ######
