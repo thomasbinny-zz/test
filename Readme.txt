@@ -1,45 +1,12 @@
  the static website is hosted on.
- http://52.16.171.183
+ http://{{PROJECT}}.binny.com
 
-If you need a dns we could use route53 from your aws account, create a A record and that should do.
+The Docker file deploys a static website and would provide an endpoint on the internet.
 
-The corrections on the Ec2 instances are as below.
-
-the static files were missing from www folder on the instance had to clone the submodule
-git submodule update --init
-
-Found the submodule repo from
-[ec2-user@ip-172-29-33-53 assingment]$ cat .gitmodules 
-[submodule "www"]
-	path = www
-	url = https://github.com/whitesunset/wannacrypt_balance
-  
-git submodule add https://github.com/whitesunset/wannacrypt_balance www
-
-
-
-The Docker file had the following lines missing 
-
-RUN mkdir -p /run/nginx
-
-RUN mkdir /www && \
-    chown -R nginx:www /var/lib/nginx && \
-    chown -R nginx:www /www && \
-    chown -R nginx:www /run/nginx
-
-EXPOSE 80 
-
-/run/nginx was important for nginx process to come live.
-EXPOSE 80 helps in exposing the running nginx to the instance outside the container.
-
-Docker image was missing to complete docker run.
 sudo docker build -t 'website:01' .
 
 sudo docker run -dit -v /home/ec2-user/assingment/www:/www -p 80:80 website:01
-**********************************
-Adding Context below for the second part of the question.
 
-I would not be able to provide code for automation but the suggestions are below.
 
 We could use a Jenkins template  to Build and  Deploy on jenkins agent.
 
@@ -66,8 +33,6 @@ Docker Swarm
 We could deploy it to multiple Ec2 instances using AutoScaling to scale up and down, but you would be spending more money 
 for a small static website, which would be economical on containers deployed on clusters which can be scaled up and down.
 
-
-Updates from 5th August 2019
 
 - We could also deploy these static files to S3 and create a route53 if you are looking for an easier solution or using ansible.
 But looking at the bigger picture is what as a Devops Engineer would be ideal.
